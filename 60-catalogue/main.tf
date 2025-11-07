@@ -45,17 +45,20 @@ resource "aws_ec2_instance_state" "catalogue" {
   depends_on = [ terraform_data.catalogue ]
 }
 
-resource "aws_ami_from_instance" "catalogue" {
-  name               = "${local.common_name_suffix}-catalogue-ami"
-  source_instance_id = aws_ec2_instance_state.catalogue.id
-  depends_on = [ aws_ec2_instance_state.catalogue ]
-  tags = merge (
-      local.common_tags,
-      {
-          Name = "${local.common_name_suffix}-catalogue-ami" # roboshop-dev-mongodb
-      }
-  )
-}
+
+
+
+# resource "aws_ami_from_instance" "catalogue" {
+#   name               = "${local.common_name_suffix}-catalogue-ami"
+#   source_instance_id = aws_ec2_instance_state.catalogue.id
+#   depends_on = [ aws_ec2_instance_state.catalogue ]
+#   tags = merge (
+#       local.common_tags,
+#       {
+#           Name = "${local.common_name_suffix}-catalogue-ami" # roboshop-dev-mongodb
+#       }
+#   )
+# }
 
 # resource "aws_lb_target_group" "catalogue" {
 #   name     = "${local.common_name_suffix}-catalogue"
