@@ -77,69 +77,69 @@ resource "aws_lb_target_group" "catalogue" {
   }
 }
 
-resource "aws_launch_template" "catalogue" {
-  name = "${local.common_name_suffix}-catalogue"
-  image_id = "aws_ami_from_instance.catalogue.id"
+# resource "aws_launch_template" "catalogue" {
+#   name = "${local.common_name_suffix}-catalogue"
+#   image_id = "aws_ami_from_instance.catalogue.id"
 
-  instance_initiated_shutdown_behavior = "terminate"
-  instance_type = "t3.micro"
+#   instance_initiated_shutdown_behavior = "terminate"
+#   instance_type = "t3.micro"
 
 
-  vpc_security_group_ids = [local.catalogue_sg_id]
+#   vpc_security_group_ids = [local.catalogue_sg_id]
 
-  tag_specifications {
-    resource_type = "instance"
+#   tag_specifications {
+#     resource_type = "instance"
 
-    tags = merge(
-      local.common_tags,
-      {
-        Name = "${local.common_name_suffix}-catalogue"
-      }
-    )
-  }
-  tag_specifications {
-    resource_type = "volume"
+#     tags = merge(
+#       local.common_tags,
+#       {
+#         Name = "${local.common_name_suffix}-catalogue"
+#       }
+#     )
+#   }
+#   tag_specifications {
+#     resource_type = "volume"
 
-    tags = merge(
-      local.common_tags,
-      {
-        Name = "${local.common_name_suffix}-catalogue"
-      }
-    )
-  }
-}
+#     tags = merge(
+#       local.common_tags,
+#       {
+#         Name = "${local.common_name_suffix}-catalogue"
+#       }
+#     )
+#   }
+# }
 
-resource "aws_autoscaling_group" "catalogue" {
-  name                      = "${local.common_name_suffix}-catalogue"
-  max_size                  = 10
-  min_size                  = 1
-  health_check_grace_period = 100
-  health_check_type         = "ELB"
-  desired_capacity          = 1
-  force_delete              = false
-  launch_template {
-    id      = aws_launch_template.catalogue.id
-    version = aws_launch_template.catalogue.latest_version
-  }
-  vpc_zone_identifier       = local.private_subnet_ids
-  target_group_arns = [aws_lb_target_group.catalogue.arn]
+# resource "aws_autoscaling_group" "catalogue" {
+#   name                      = "${local.common_name_suffix}-catalogue"
+#   max_size                  = 10
+#   min_size                  = 1
+#   health_check_grace_period = 100
+#   health_check_type         = "ELB"
+#   desired_capacity          = 1
+#   force_delete              = false
+#   launch_template {
+#     id      = aws_launch_template.catalogue.id
+#     version = aws_launch_template.catalogue.latest_version
+#   }
+#   vpc_zone_identifier       = local.private_subnet_ids
+#   target_group_arns = [aws_lb_target_group.catalogue.arn]
   
-  dynamic "tag" {  # we will get the iterator with name as tag
-    for_each = merge(
-      local.common_tags,
-      {
-        Name = "${local.common_name_suffix}-catalogue"
-      }
-    )
-    content {
-      key                 = tag.key
-      value               = tag.value
-      propagate_at_launch = true
-    }
-  }
+#   dynamic "tag" {  # we will get the iterator with name as tag
+#     for_each = merge(
+#       local.common_tags,
+#       {
+#         Name = "${local.common_name_suffix}-catalogue"
+#       }
+#     )
+#     content {
+#       key                 = tag.key
+#       value               = tag.value
+#       propagate_at_launch = true
+#     }
+#   }
 
-  timeouts {
-    delete = "15m"
-  }
+#   timeouts {
+#     delete = "15m"
+#   }
 
-}
+# }
