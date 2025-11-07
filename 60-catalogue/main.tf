@@ -79,7 +79,7 @@ resource "aws_lb_target_group" "catalogue" {
 
 resource "aws_launch_template" "catalogue" {
   name = "${local.common_name_suffix}-catalogue"
-  image_id = "aws_ami_from_instance.catalogue"
+  image_id = "aws_ami_from_instance.catalogue.id"
 
   instance_initiated_shutdown_behavior = "terminate"
   instance_type = "t3.micro"
