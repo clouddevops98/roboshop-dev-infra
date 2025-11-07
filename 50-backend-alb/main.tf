@@ -18,7 +18,7 @@ resource "aws_lb" "backend_alb" {
 # Backend ALB listing on port number 80
 
 
-resource "aws_lb_listener" "frontend_end" {
+resource "aws_lb_listener" "backend_alb" {
   load_balancer_arn = aws_lb.backend_alb.arn
   port              = "80"
   protocol          = "HTTP"
@@ -33,3 +33,17 @@ resource "aws_lb_listener" "frontend_end" {
     }
   }
 }
+
+resource "aws_route53_record" "backend_alb" {
+  zone_id = var.zone_id
+  name    = "*.backend-alb-${var.environment}.${var.domain_name}"
+  type    = "A"
+
+  alias {
+    name                   = aws_lb.backend_alb.dns_name
+    zone_id                = aws_lb.backend_alb.zone_id
+    evaluate_target_health = true
+  }
+}
+
+
