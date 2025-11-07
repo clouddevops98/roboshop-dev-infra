@@ -30,12 +30,3 @@ data "aws_ssm_parameter" "vpc_id" {
   name = "/${var.project_name}/${var.environment}/vpc_id"
 }
 
-data "aws_ami" "catalogue" {
-  most_recent = true
-  owners      = ["930832106480"]
-
-  filter {
-    name   = "${local.common_name_suffix}-catalogue"
-    values = ["catalogue-ami*"]
-  }
-}
