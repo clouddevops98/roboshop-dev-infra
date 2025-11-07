@@ -7,7 +7,8 @@ resource "aws_instance" "catalogue" {
     tags = merge (
         local.common_tags,
         {
-            Name = "${local.common_name_suffix}-catalogue" 
+            Name = "${local.common_name_suffix}-catalogue"
+        }
     )
 }
 
