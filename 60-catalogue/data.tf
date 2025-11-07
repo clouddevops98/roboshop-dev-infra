@@ -32,10 +32,10 @@ data "aws_ssm_parameter" "vpc_id" {
 
 data "aws_ami" "catalogue" {
   most_recent = true
-  owners      = ["self"]
+  owners      = ["930832106480"]
 
   filter {
-    name   = "name"
+    name   = "${local.common_name_suffix}-catalogue"
     values = ["catalogue-ami*"]
   }
 }
