@@ -1,3 +1,4 @@
+# Create EC2 instance
 resource "aws_instance" "catalogue" {
     ami = local.ami_id
     instance_type = "t3.micro"
@@ -7,11 +8,12 @@ resource "aws_instance" "catalogue" {
     tags = merge (
         local.common_tags,
         {
-            Name = "${local.common_name_suffix}-catalogue"
+            Name = "${local.common_name_suffix}-catalogue" # roboshop-dev-mongodb
         }
     )
 }
 
+# Connect to instance using remote-exec provisioner through terraform_data
 resource "terraform_data" "catalogue" {
   triggers_replace = [
     aws_instance.catalogue.id
@@ -39,24 +41,22 @@ resource "terraform_data" "catalogue" {
   }
 }
 
+# stop the instance to take image
 resource "aws_ec2_instance_state" "catalogue" {
   instance_id = aws_instance.catalogue.id
-  state = "stopped"
-  depends_on = [ terraform_data.catalogue ]
+  state       = "stopped"
+  depends_on = [terraform_data.catalogue]
 }
-
-
-
 
 resource "aws_ami_from_instance" "catalogue" {
   name               = "${local.common_name_suffix}-catalogue-ami"
   source_instance_id = aws_instance.catalogue.id
   depends_on = [aws_ec2_instance_state.catalogue]
   tags = merge (
-      local.common_tags,
-      {
-          Name = "${local.common_name_suffix}-catalogue-ami" # roboshop-dev-mongodb
-      }
+        local.common_tags,
+        {
+            Name = "${local.common_name_suffix}-catalogue-ami" # roboshop-dev-mongodb
+        }
   )
 }
 
@@ -65,8 +65,7 @@ resource "aws_lb_target_group" "catalogue" {
   port     = 8080
   protocol = "HTTP"
   vpc_id   = local.vpc_id
-  deregistration_delay = 60
-
+  deregistration_delay = 60 # waiting period before deleting the instance
 
   health_check {
     healthy_threshold = 2
@@ -82,16 +81,14 @@ resource "aws_lb_target_group" "catalogue" {
 
 resource "aws_launch_template" "catalogue" {
   name = "${local.common_name_suffix}-catalogue"
-  image_id = "aws_ami_from_instance.catalogue.id"
- 
-
+  image_id = aws_ami_from_instance.catalogue.id
 
   instance_initiated_shutdown_behavior = "terminate"
   instance_type = "t3.micro"
 
-
   vpc_security_group_ids = [local.catalogue_sg_id]
 
+  # tags attached to the instance
   tag_specifications {
     resource_type = "instance"
 
@@ -102,6 +99,8 @@ resource "aws_launch_template" "catalogue" {
       }
     )
   }
+
+  # tags attached to the volume created by instance
   tag_specifications {
     resource_type = "volume"
 
@@ -112,6 +111,15 @@ resource "aws_launch_template" "catalogue" {
       }
     )
   }
+
+  # tags attached to the launch template
+  tags = merge(
+      local.common_tags,
+      {
+        Name = "${local.common_name_suffix}-catalogue"
+      }
+  )
+
 }
 
 resource "aws_autoscaling_group" "catalogue" {
@@ -164,7 +172,6 @@ resource "aws_autoscaling_policy" "example" {
   }
 }
 
-
 resource "aws_lb_listener_rule" "catalogue" {
   listener_arn = local.backend_alb_listener_arn
   priority     = 10
@@ -178,5 +185,16 @@ resource "aws_lb_listener_rule" "catalogue" {
     host_header {
       values = ["catalogue.backend-alb-${var.environment}.${var.domain_name}"]
     }
+  }
+}
+
+resource "terraform_data" "catalogue_local" {
+  triggers_replace = [
+    aws_instance.catalogue.id
+  ]
+  
+  depends_on = [aws_autoscaling_policy.catalogue]
+  provisioner "local-exec" {
+    command = "aws ec2 terminate-instances --instance-ids ${aws_instance.catalogue.id}"
   }
 }
