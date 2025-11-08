@@ -34,3 +34,20 @@ data "aws_ssm_parameter" "vpc_id" {
 data "aws_ssm_parameter" "backend_alb_listener_arn" {
   name = "/${var.project_name}/${var.environment}/backend_alb_listener_arn"
 }
+
+
+# data "aws_ami" "amazon_linux" {
+#   most_recent = true
+
+#   filter {
+#     name   = "${local.common_name_suffix}-catalogue"
+#     values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+#   }
+
+#   filter {
+#     name   = "${local.common_name_suffix}-catalogue"
+#     values = ["hvm"]
+#   }
+
+#   owners = [""]
+# }

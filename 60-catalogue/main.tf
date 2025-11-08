@@ -50,8 +50,8 @@ resource "aws_ec2_instance_state" "catalogue" {
 
 resource "aws_ami_from_instance" "catalogue" {
   name               = "${local.common_name_suffix}-catalogue-ami"
-  source_instance_id = aws_ec2_instance_state.catalogue.id
-  depends_on = [ aws_ec2_instance_state.catalogue ]
+  source_instance_id = aws_instance.catalogue.id
+  depends_on = [aws_ec2_instance_state.catalogue]
   tags = merge (
       local.common_tags,
       {
@@ -70,7 +70,7 @@ resource "aws_lb_target_group" "catalogue" {
 
   health_check {
     healthy_threshold = 2
-    interval = 19
+    interval = 10
     matcher = "200-299"
     path = "/health"
     port = 8080
