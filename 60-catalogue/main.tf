@@ -144,7 +144,7 @@ resource "aws_autoscaling_group" "catalogue" {
     preferences {
       min_healthy_percentage = 50
     }
-    triggers = ["lanuch_template"]
+    triggers = ["launch_template"]
   }
   
   dynamic "tag" {  # we will get the iterator with name as tag
