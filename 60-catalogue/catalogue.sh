@@ -31,4 +31,3 @@ fi
 echo "environment is: $2"
 ansible-playbook -e component=$component -e env=$environment main.yaml
 
-Latest = ami-0c75f6e76f59828d8
