@@ -1,5 +1,11 @@
+# module "components" {
+#   source = "../../terraform-roboshop-component"
+#   component = var.component
+#   rule_priority = var.rule_priority
+# }
+
 module "components" {
-  source = "../../terraform-roboshop-component"
-  component = var.component
-  rule_priority = 10
+  source = "git::https://github.com/clouddevops98/terraform-roboshop-component.git"
+  component = eack.key
+  rule_priority = ecah.value.rule_priority
 }
