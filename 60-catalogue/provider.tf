@@ -10,7 +10,7 @@ terraform {
     bucket = "somayya-remote-state-dev"
     key    = "roboshop-dev-catalogue"
     region = "us-east-1"
-    use_lockfile = true
+    use_lockfile = false
     encrypt = true
   }
 }
