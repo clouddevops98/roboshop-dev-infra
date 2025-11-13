@@ -5,6 +5,7 @@
 # }
 
 module "components" {
+  for_each = var.components
   source = "git::https://github.com/clouddevops98/terraform-roboshop-component.git?ref=main"
   component = eack.key
   rule_priority = ecah.value.rule_priority
