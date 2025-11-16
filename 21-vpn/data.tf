@@ -1,4 +1,4 @@
-data "aws_ami" "joindevops" {
+data "aws_ami" "openvpn" {
     owners           = ["930832106480"]
     most_recent      = true
     
